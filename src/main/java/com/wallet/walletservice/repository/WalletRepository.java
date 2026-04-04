@@ -13,11 +13,17 @@ public interface WalletRepository extends JpaRepository<Wallet, java.util.UUID> 
     // Атомарное пополнение
     @Modifying
     @Query("UPDATE Wallet w SET w.balance = w.balance + :amount WHERE w.id = :id")
-    int deposit(@Param("id") java.util.UUID id, @Param("amount") java.math.BigDecimal amount);
+    int deposit(
+            @Param("id") java.util.UUID id,
+            @Param("amount") java.math.BigDecimal amount
+    );
 
     // Атомарное снятие с проверкой баланса
     @Modifying
     @Query("UPDATE Wallet w SET w.balance = w.balance - :amount " +
             "WHERE w.id = :id AND w.balance >= :amount")
-    int withdraw(@Param("id") java.util.UUID id, @Param("amount") java.math.BigDecimal amount);
+    int withdraw(
+            @Param("id") java.util.UUID id,
+            @Param("amount") java.math.BigDecimal amount
+    );
 }
