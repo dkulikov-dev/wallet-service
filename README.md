@@ -43,7 +43,7 @@ GET/api/v1/wallets/{walletId} — получение баланса
 
 ### Grafana Dashboard
 
-![Grafana Dashboard](docs/images/grafana-dashboard.png)
+![Grafana Dashboard](docs/images/grafana-dashboard.jpg)
 
 **Доступные метрики:**
 - ✅ Request Rate (запросов в секунду)

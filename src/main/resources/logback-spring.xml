@@ -2,12 +2,12 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml" />
 
-    <!-- JSON-логгирование с поддержкой MDC -->
-    <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- JSON-аппендер для консоли (Docker logs) -->
+    <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
             <providers>
                 <timestamp/>
-                <mdc/>                    <!-- ← сюда попадают requestId, walletId, operationType -->
+                <mdc/>
                 <logLevel/>
                 <threadName/>
                 <loggerName/>
@@ -17,11 +17,33 @@
         </encoder>
     </appender>
 
-    <!-- Уровень логирования для нашего пакета -->
+    <!-- JSON-аппендер для файла (Promtail) -->
+    <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/app/logs/app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/app/logs/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp/>
+                <mdc/>
+                <logLevel/>
+                <threadName/>
+                <loggerName/>
+                <message/>
+                <stackTrace/>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- Уровень логирования -->
     <logger name="com.wallet.walletservice" level="DEBUG" />
 
     <!-- Корневой логгер -->
     <root level="INFO">
-        <appender-ref ref="JSON" />
+        <appender-ref ref="JSON_CONSOLE" />
+        <appender-ref ref="JSON_FILE" />
     </root>
 </configuration>

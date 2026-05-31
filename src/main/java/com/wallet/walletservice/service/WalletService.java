@@ -38,9 +38,9 @@ public class WalletService {
             } else if ("WITHDRAW".equalsIgnoreCase(operationType)) {
                 int updated = repository.withdraw(walletId, amount);
                 if (updated == 0) {
-                    repository.findById(walletId)
+                    Wallet wallet = repository.findById(walletId)
                             .orElseThrow(() -> new WalletNotFoundException("Кошелёк не найден: " + walletId));
-                    throw new InsufficientFundsException(BigDecimal.ZERO, amount);
+                    throw new InsufficientFundsException(wallet.getBalance(), amount);
                 }
                 log.info("Выполнено снятие на сумму {}", amount);
             } else {

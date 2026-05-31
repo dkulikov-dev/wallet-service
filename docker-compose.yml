@@ -51,6 +51,8 @@ services:
     restart: always
     ports:
       - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
     depends_on:
       - prometheus
 
@@ -70,6 +72,35 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wallet_pass}
     ports:
       - "8080:8080"
+    volumes:
+      - app_logs:/app/logs
+
+  # ==================== Loki ====================
+  loki:
+    image: grafana/loki:3.0.0
+    container_name: wallet-loki
+    restart: always
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yml:/etc/loki/local-config.yaml
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+
+  # ==================== Promtail (без Docker socket!) ====================
+  promtail:
+    image: grafana/promtail:3.0.0
+    container_name: wallet-promtail
+    restart: always
+    volumes:
+      - ./promtail-config.yml:/etc/promtail/config.yml
+      - app_logs:/app/logs
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
 
 volumes:
   postgres_data:
+  app_logs:
+  loki_data:
+  grafana_data:
